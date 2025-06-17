@@ -6,18 +6,52 @@
 //
 
 import UIKit
+import FirebaseAuth
+import FirebaseFirestore
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
 
+      func scene(_ scene: UIScene,
+                 willConnectTo session: UISceneSession,
+                 options connectionOptions: UIScene.ConnectionOptions) {
+          guard let windowScene = (scene as? UIWindowScene) else { return }
 
-    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
-        // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
-        // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-        guard let _ = (scene as? UIWindowScene) else { return }
-    }
+          let window = UIWindow(windowScene: windowScene)
+          self.window = window
+
+          // 로그인 상태 확인
+          if let user = Auth.auth().currentUser {
+              let userId = user.uid
+
+              // ✅ Firestore 사용자 문서 확인
+              Firestore.firestore().collection("users").document(userId).getDocument { snapshot, error in
+                  if let snapshot = snapshot, snapshot.exists {
+                      print("✅ 사용자 정보 있음")
+                      self.setRootView(TabBarController(), in: window)
+                  } else {
+                      print("⚠️ 사용자 문서 없음 → 강제 로그아웃")
+                      try? Auth.auth().signOut()
+                      self.setRootView(LoginViewController(), in: window)
+                  }
+              }
+          } else {
+              // 비로그인 상태
+              print("❌ 로그인된 사용자가 없습니다.")
+              setRootView(LoginViewController(), in: window)
+          }
+      }
+
+      private func setRootView(_ vc: UIViewController, in window: UIWindow) {
+          let navigationController = UINavigationController(rootViewController: vc)
+          DispatchQueue.main.async {
+              window.rootViewController = navigationController
+              window.makeKeyAndVisible()
+          }
+      }
+
+    
 
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.
