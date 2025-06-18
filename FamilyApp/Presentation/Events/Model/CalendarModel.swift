@@ -33,10 +33,10 @@ final class CalendarModel {
             return
         }
         
-        let days = stride(from: firstWeek.start, through: lastWeek.end, by: 60 * 60 * 24).map {
+        let days = stride(from: monthInterval.start, to: monthInterval.end, by: 60 * 60 * 24).map {
             CalendarDate(
                 date: $0,
-                isCurrentMonth: calendar.isDate($0, equalTo: month, toGranularity: .month),
+                isCurrentMonth: true,
                 schedules: []
             )
         }

@@ -69,7 +69,13 @@ final class MomentsViewController: UIViewController {
         setupUI()
         fetchMoments()
         startRemainingTimeTimer()
+        NotificationCenter.default.addObserver(self, selector: #selector(refreshMoments), name: .momentDidUpload, object: nil)
+
     }
+    @objc private func refreshMoments() {
+        fetchMoments()
+    }
+
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -421,6 +427,9 @@ extension MomentsViewController: UITableViewDelegate, UITableViewDataSource {
         return view
     }
 
+}
+extension Notification.Name {
+    static let momentDidUpload = Notification.Name("momentDidUpload")
 }
 
 

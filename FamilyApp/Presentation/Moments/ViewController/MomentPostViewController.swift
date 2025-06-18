@@ -36,7 +36,7 @@ final class MomentPostViewController: UIViewController {
     private let uploadButton = UIButton().then {
         $0.setTitle("업로드하기", for: .normal)
         $0.setTitleColor(.white, for: .normal)
-        $0.backgroundColor = .systemBlue
+        $0.backgroundColor = UIColor(hex: "#FFAE52")
         $0.layer.cornerRadius = 8
     }
 
@@ -98,6 +98,10 @@ final class MomentPostViewController: UIViewController {
               let imageData = image.jpegData(compressionQuality: 0.8),
               let content = contentField.text, !content.isEmpty else {
             print("❗️이미지 또는 내용이 없음")
+            print("userName:", UserDefaults.standard.string(forKey: "userName") ?? "nil")
+            print("familyId:", UserDefaults.standard.string(forKey: "familyId") ?? "nil")
+            print("role:", UserDefaults.standard.string(forKey: "role") ?? "nil")
+
             return
         }
 
@@ -151,6 +155,7 @@ final class MomentPostViewController: UIViewController {
                     } else {
                         print("✅ 성공적으로 업로드됨!")
                         self.navigationController?.popViewController(animated: true)
+                        NotificationCenter.default.post(name: .momentDidUpload, object: nil)
                     }
                 }
             }

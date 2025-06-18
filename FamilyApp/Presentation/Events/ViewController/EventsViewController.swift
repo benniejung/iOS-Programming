@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 import SnapKit
 import Then
+import FirebaseFirestore
 
 final class EventsViewController: UIViewController {
 
@@ -41,14 +42,14 @@ final class EventsViewController: UIViewController {
 
         view.addSubview(weekDaysStackView)
         weekDaysStackView.snp.makeConstraints {
-            $0.top.equalTo(yearMonthLabel.snp.bottom).offset(12)
+            $0.top.equalTo(yearMonthLabel.snp.bottom).offset(15)
             $0.leading.trailing.equalToSuperview().inset(20)
             $0.height.equalTo(20)
         }
     }
 
     private let titleLabel = UILabel().then {
-        $0.text = "Calendar"
+        $0.text = "Events"
         $0.font = .boldSystemFont(ofSize: 20)
         $0.textColor = .white
     }
@@ -98,6 +99,15 @@ final class EventsViewController: UIViewController {
         $0.setTitle(">", for: .normal)
         $0.setTitleColor(.black, for: .normal)
     }
+    
+    private let addScheduleButton = UIButton().then {
+        $0.setTitle("일정 추가하기", for: .normal)
+        $0.setTitleColor(.white, for: .normal)
+        $0.backgroundColor = UIColor(hex: "#FDAF3F")
+        $0.layer.cornerRadius = 8
+        $0.titleLabel?.font = .boldSystemFont(ofSize: 14)
+    }
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -109,6 +119,7 @@ final class EventsViewController: UIViewController {
          setupLayout()
          setupAction()
          reloadCalendar()
+        updateYearMonthLabel()
 
     }
 
@@ -162,7 +173,7 @@ final class EventsViewController: UIViewController {
         }
 
         yearMonthLabel.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(30)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(35)
             $0.centerX.equalToSuperview()
         }
 
@@ -204,12 +215,28 @@ final class EventsViewController: UIViewController {
             $0.top.equalTo(scheduleLabel.snp.bottom).offset(16)
             $0.leading.trailing.bottom.equalToSuperview().inset(16)
         }
+        
+        view.addSubview(addScheduleButton)
+        addScheduleButton.snp.makeConstraints {
+            $0.top.equalTo(scheduleBox.snp.bottom).offset(16)
+            $0.centerX.equalToSuperview()
+            $0.width.equalTo(120)
+            $0.height.equalTo(40)
+        }
     }
-
+    
+    private func updateYearMonthLabel() {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.dateFormat = "yyyy년 MM월"
+        yearMonthLabel.text = formatter.string(from: currentDate)
+    }
 
     private func setupAction() {
         prevButton.addTarget(self, action: #selector(didTapPrev), for: .touchUpInside)
         nextButton.addTarget(self, action: #selector(didTapNext), for: .touchUpInside)
+        addScheduleButton.addTarget(self, action: #selector(addSchedule), for: .touchUpInside)
+
     }
 
     @objc private func didTapPrev() {
@@ -223,18 +250,18 @@ final class EventsViewController: UIViewController {
     }
 
     private func reloadCalendar() {
+        updateYearMonthLabel()
         calendarManager.dates(for: currentDate) { [weak self] dates in
-            self?.calendarDates = dates
-            DispatchQueue.main.async {
-                self?.calendarCollectionView.reloadData()
-            }
+                self?.calendarDates = dates
+                DispatchQueue.main.async {
+                    self?.calendarCollectionView.reloadData()
+                }
 
-            if let current = self?.currentDate {
-                self?.selectedDate = current // ✅ 초기 선택 날짜 설정
-                self?.updateSchedule(for: current)
+                if let current = self?.currentDate {
+                    self?.selectedDate = current
+                    self?.updateSchedule(for: current)
+                }
             }
-
-        }
     }
 
     private func updateSchedule(for date: Date) {
@@ -255,7 +282,10 @@ final class EventsViewController: UIViewController {
     
     private func createScheduleView(userName: String, task: String) -> UIView {
         let container = UIView()
-        container.backgroundColor = UIColor(hex: "#FAF7F2") // 전체 배경
+        container.backgroundColor = UIColor(hex: "#FAF7F2")
+
+        // 👉 Firestore 문서 찾기 위해 필드 저장
+        container.accessibilityLabel = userName + "|" + task
 
         let colorBar = UIView().then {
             $0.backgroundColor = UIColor(hex: "#FFE4B8")
@@ -292,8 +322,148 @@ final class EventsViewController: UIViewController {
             $0.top.trailing.bottom.equalToSuperview().inset(12)
         }
 
+        // 👉 탭 제스처 추가
+        let tap = UITapGestureRecognizer(target: self, action: #selector(didTapSchedule(_:)))
+        container.isUserInteractionEnabled = true
+        container.addGestureRecognizer(tap)
+
         return container
     }
+
+    
+    @objc private func addSchedule() {
+        let alert = UIAlertController(title: "일정 추가", message: "추가할 일정을 입력하세요", preferredStyle: .alert)
+
+        alert.addTextField { textField in
+            textField.placeholder = "예: 병원 예약, 가족 모임"
+        }
+
+        let addAction = UIAlertAction(title: "추가", style: .default) { _ in
+            guard let taskText = alert.textFields?.first?.text, !taskText.isEmpty else { return }
+            guard let userName = UserDefaults.standard.string(forKey: "userName") else { return }
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd"
+            let dateString = formatter.string(from: self.selectedDate ?? Date())
+
+
+            let data: [String: Any] = [
+                "userName": userName,
+                "task": taskText,
+                "date": Timestamp(date: self.selectedDate ?? Date()),
+                "dateString": dateString
+            ]
+
+            Firestore.firestore().collection("schedules").addDocument(data: data) { error in
+                if let error = error {
+                    print("❌ 일정 추가 실패: \(error.localizedDescription)")
+                } else {
+                    print("✅ 일정 추가 성공")
+                    self.updateSchedule(for: self.selectedDate ?? Date())
+                    self.reloadCalendar()
+                }
+            }
+        }
+
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+
+        alert.addAction(addAction)
+        alert.addAction(cancelAction)
+
+        self.present(alert, animated: true)
+    }
+    
+    @objc private func didTapSchedule(_ sender: UITapGestureRecognizer) {
+        guard let view = sender.view,
+              let label = view.accessibilityLabel,
+              let selectedDate = selectedDate else { return }
+
+        let parts = label.components(separatedBy: "|")
+        guard parts.count == 2 else { return }
+        let userName = parts[0]
+        let task = parts[1]
+
+        let alert = UIAlertController(title: "일정 관리", message: "\"\(task)\" 일정", preferredStyle: .actionSheet)
+
+        alert.addAction(UIAlertAction(title: "수정", style: .default, handler: { _ in
+            self.showEditAlert(originalTask: task, userName: userName, date: selectedDate)
+        }))
+
+        alert.addAction(UIAlertAction(title: "삭제", style: .destructive, handler: { _ in
+            self.deleteSchedule(task: task, userName: userName, date: selectedDate)
+        }))
+
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+
+        present(alert, animated: true)
+    }
+    private func showEditAlert(originalTask: String, userName: String, date: Date) {
+        let formatter = DateFormatter()
+          formatter.dateFormat = "yyyy-MM-dd"
+          let dateString = formatter.string(from: date) // 🔧 추가
+
+        let alert = UIAlertController(title: "일정 수정", message: nil, preferredStyle: .alert)
+        alert.addTextField { $0.text = originalTask }
+
+        alert.addAction(UIAlertAction(title: "저장", style: .default, handler: { _ in
+            guard let newTask = alert.textFields?.first?.text, !newTask.isEmpty else { return }
+
+            let db = Firestore.firestore()
+            db.collection("schedules")
+                .whereField("userName", isEqualTo: userName)
+                .whereField("task", isEqualTo: originalTask)
+                .whereField("dateString", isEqualTo: dateString)
+                .getDocuments { snapshot, error in
+                    if let doc = snapshot?.documents.first {
+                        doc.reference.updateData(["task": newTask]) { err in
+                            if err == nil {
+                                self.reloadCalendar()
+                            }
+                        }
+                    }
+                }
+        }))
+
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+        present(alert, animated: true)
+    }
+    private func deleteSchedule(task: String, userName: String, date: Date) {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        let dateString = formatter.string(from: date)
+
+        let db = Firestore.firestore()
+        db.collection("schedules")
+            .whereField("userName", isEqualTo: userName)
+            .whereField("task", isEqualTo: task)
+            .whereField("dateString", isEqualTo: dateString)
+            .getDocuments { snapshot, error in
+                if let error = error {
+                    print("❌ 쿼리 에러: \(error.localizedDescription)")
+                    return
+                }
+                
+                guard let documents = snapshot?.documents, !documents.isEmpty else {
+                    print("❗️삭제할 문서를 찾지 못함 — 조건 확인 필요")
+                    print("조건: userName=\(userName), task=\(task), dateString=\(dateString)")
+                    return
+                }
+
+                // 🔥 첫 문서 삭제
+                let doc = documents.first
+                doc?.reference.delete { err in
+                    if let err = err {
+                        print("❌ 삭제 실패: \(err.localizedDescription)")
+                    } else {
+                        print("✅ 일정 삭제 성공")
+                        self.updateSchedule(for: self.selectedDate ?? Date())
+                        self.reloadCalendar()
+                    }
+                }
+            }
+    }
+
+
+
 
 
 }

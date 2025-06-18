@@ -189,7 +189,11 @@ final class SignUpViewController: UIViewController {
                     self.showAlert(message: "사용자 정보 저장 실패: \(error.localizedDescription)")
                 } else {
                     self.showAlert(message: "회원가입 성공!", completion: {
-                        self.dismiss(animated: true)
+                        if let nav = self.navigationController {
+                            nav.popViewController(animated: true) // push로 왔을 경우
+                        } else {
+                            self.dismiss(animated: true) // present로 왔을 경우
+                        }
                     })
                 }
             }
@@ -201,7 +205,7 @@ final class SignUpViewController: UIViewController {
         let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .default) { _ in
             completion?()
-        })
+    })
         present(alert, animated: true)
     }
 }

@@ -57,7 +57,7 @@ final class LoginViewController: UIViewController {
     )
 
     private let signInButton = UIButton().then {
-        $0.setTitle("Sign In", for: .normal)
+        $0.setTitle("로그인", for: .normal)
         $0.backgroundColor = UIColor(hex: "#FBB65F")
         $0.setTitleColor(.white, for: .normal)
         $0.layer.cornerRadius = 12
@@ -66,11 +66,11 @@ final class LoginViewController: UIViewController {
 
     private let signUpHintLabel = UILabel().then {
         let text = NSMutableAttributedString(
-            string: "Don't have an account? ",
+            string: "계정이 없으신가요? ",
             attributes: [.foregroundColor: UIColor.darkGray]
         )
         text.append(NSAttributedString(
-            string: "Sign up",
+            string: "회원가입",
             attributes: [.foregroundColor: UIColor(hex: "#6D97DE")]
         ))
         $0.attributedText = text
@@ -81,13 +81,13 @@ final class LoginViewController: UIViewController {
     
     // 레이블 추가
     private let emailTitleLabel = UILabel().then {
-        $0.text = "Email Address"
+        $0.text = "이메일"
         $0.font = .boldSystemFont(ofSize: 14)
         $0.textColor = .black
     }
 
     private let passwordTitleLabel = UILabel().then {
-        $0.text = "Password"
+        $0.text = "비밀번호"
         $0.font = .boldSystemFont(ofSize: 14)
         $0.textColor = .black
     }
@@ -195,6 +195,7 @@ final class LoginViewController: UIViewController {
                     UserDefaults.standard.set(user.uid, forKey: "userId")
                     UserDefaults.standard.set(data["name"] as? String ?? "", forKey: "userName")
                     UserDefaults.standard.set(data["familyId"] as? String ?? "", forKey: "familyId")
+                    UserDefaults.standard.set(data["role"] as? String ?? "", forKey: "role")
 
                     print("✅ 사용자 정보 저장 완료")
                     self.switchToMainApp()

@@ -45,7 +45,7 @@ final class HomeViewController: UIViewController {
     }
 
     private let reportButton = UIButton().then {
-        $0.setTitle("→ 가족에게 생존신고하기", for: .normal)
+        $0.setTitle("→ 오늘 하루 공유하기", for: .normal)
          $0.setTitleColor(.black, for: .normal)
          $0.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
          $0.backgroundColor = UIColor(hex: "#FFDCA6")
@@ -106,7 +106,6 @@ final class HomeViewController: UIViewController {
 
         layout()
         fetchFamilyMembers()
-        fetchTodaySchedules()
         inviteButton.addTarget(self, action: #selector(inviteFamily), for: .touchUpInside)
 
     }
@@ -160,7 +159,7 @@ final class HomeViewController: UIViewController {
 
         headerView.addSubview(reportButton)
         reportButton.snp.makeConstraints {
-            $0.top.equalTo(helloLabel.snp.bottom).offset(20)
+            $0.top.equalTo(helloLabel.snp.bottom).offset(10)
             $0.leading.equalToSuperview().offset(24)
             $0.trailing.lessThanOrEqualToSuperview().offset(-24)
             $0.height.equalTo(44)
@@ -223,7 +222,7 @@ final class HomeViewController: UIViewController {
 
                 } else {
                     self.helloLabel.isHidden = false
-                    self.reportButton.isHidden = true  // 항상 숨김 처리
+                    self.reportButton.isHidden = false // 항상 숨김 처리
                     self.myFamilyLabel.isHidden = false
                     self.familyStack.isHidden = false
                     self.todayLabel.isHidden = false
