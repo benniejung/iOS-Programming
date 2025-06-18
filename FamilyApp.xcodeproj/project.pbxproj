@@ -43,6 +43,8 @@
 		48E609C22E0164FA000BD965 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E609C12E0164FA000BD965 /* LoginView.swift */; };
 		48E609C42E01652C000BD965 /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E609C32E01652C000BD965 /* SignUpView.swift */; };
 		48E609C62E0166BE000BD965 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E609C52E0166BE000BD965 /* LoginViewController.swift */; };
+		48E609C92E01DFDE000BD965 /* CalendarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E609C82E01DFDE000BD965 /* CalendarModel.swift */; };
+		48E609CB2E01E003000BD965 /* CalendarCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E609CA2E01E003000BD965 /* CalendarCellView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -92,6 +94,8 @@
 		48E609C12E0164FA000BD965 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		48E609C32E01652C000BD965 /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
 		48E609C52E0166BE000BD965 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		48E609C82E01DFDE000BD965 /* CalendarModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarModel.swift; sourceTree = "<group>"; };
+		48E609CA2E01E003000BD965 /* CalendarCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarCellView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -213,6 +217,7 @@
 		48D930612DFB1749002829DB /* Home */ = {
 			isa = PBXGroup;
 			children = (
+				48E609CC2E023EE0000BD965 /* Model */,
 				48D930632DFB175A002829DB /* View */,
 				48D930622DFB174F002829DB /* ViewController */,
 			);
@@ -265,6 +270,7 @@
 		48D930752DFB26A6002829DB /* Events */ = {
 			isa = PBXGroup;
 			children = (
+				48E609C72E01DF9D000BD965 /* Model */,
 				48D930772DFB26B5002829DB /* ViewController */,
 				48D930762DFB26B0002829DB /* View */,
 			);
@@ -274,6 +280,7 @@
 		48D930762DFB26B0002829DB /* View */ = {
 			isa = PBXGroup;
 			children = (
+				48E609CA2E01E003000BD965 /* CalendarCellView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -331,6 +338,21 @@
 				48E609C52E0166BE000BD965 /* LoginViewController.swift */,
 			);
 			path = Auth;
+			sourceTree = "<group>";
+		};
+		48E609C72E01DF9D000BD965 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				48E609C82E01DFDE000BD965 /* CalendarModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		48E609CC2E023EE0000BD965 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -489,6 +511,7 @@
 				48E609C62E0166BE000BD965 /* LoginViewController.swift in Sources */,
 				48E609BE2E016479000BD965 /* SignUp.swift in Sources */,
 				48D930832DFB3537002829DB /* DateModel.swift in Sources */,
+				48E609CB2E01E003000BD965 /* CalendarCellView.swift in Sources */,
 				48E609B82DFEF200000BD965 /* MomentsModel.swift in Sources */,
 				48D930672DFB17AE002829DB /* TabBarController.swift in Sources */,
 				485B3C992DFABED100170177 /* AppDelegate.swift in Sources */,
@@ -497,6 +520,7 @@
 				48E609B02DFEE75D000BD965 /* MomentPostViewController.swift in Sources */,
 				485B3C9B2DFABED100170177 /* SceneDelegate.swift in Sources */,
 				48D930852DFB3586002829DB /* DateCellView.swift in Sources */,
+				48E609C92E01DFDE000BD965 /* CalendarModel.swift in Sources */,
 				48D930792DFB26C6002829DB /* EventsViewController.swift in Sources */,
 				48D9307D2DFB3142002829DB /* MainHeaderView.swift in Sources */,
 				48E609C42E01652C000BD965 /* SignUpView.swift in Sources */,

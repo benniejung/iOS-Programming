@@ -16,11 +16,13 @@ final class DateCell: UICollectionViewCell {
     private let dayLabel = UILabel().then {
         $0.font = .boldSystemFont(ofSize: 18)
         $0.textAlignment = .center
+
     }
 
     private let weekdayLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 14)
         $0.textAlignment = .center
+
     }
 
     private var gradientLayer: CAGradientLayer?
@@ -35,27 +37,29 @@ final class DateCell: UICollectionViewCell {
     }
 
     private func setupUI() {
-        contentView.layer.cornerRadius = 10
-        contentView.clipsToBounds = true
-        contentView.addSubview(dayLabel)
-        contentView.addSubview(weekdayLabel)
+          contentView.layer.cornerRadius = 10
+          contentView.clipsToBounds = true
+          contentView.backgroundColor = UIColor(hex: "#FFAE52") // ✅ 셀 배경색 적용
 
-        dayLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(8)
-            $0.centerX.equalToSuperview()
-        }
+          contentView.addSubview(dayLabel)
+          contentView.addSubview(weekdayLabel)
 
-        weekdayLabel.snp.makeConstraints {
-            $0.top.equalTo(dayLabel.snp.bottom).offset(2)
-            $0.centerX.equalToSuperview()
-            $0.bottom.equalToSuperview().offset(-8)
-        }
-    }
+          dayLabel.snp.makeConstraints {
+              $0.top.equalToSuperview().offset(8)
+              $0.centerX.equalToSuperview()
+          }
+
+          weekdayLabel.snp.makeConstraints {
+              $0.top.equalTo(dayLabel.snp.bottom).offset(2)
+              $0.centerX.equalToSuperview()
+              $0.bottom.equalToSuperview().offset(-8)
+          }
+      }
 
     override func prepareForReuse() {
         super.prepareForReuse()
         // 이전에 추가된 그라데이션 제거
-        gradientLayer?.removeFromSuperlayer()
+        //gradientLayer?.removeFromSuperlayer()
     }
 
     func configure(with model: DateModel, today: Date) {
@@ -69,8 +73,8 @@ final class DateCell: UICollectionViewCell {
         if dateOnly == todayOnly {
             // 오늘 날짜 셀은 완전한 흰색
             contentView.backgroundColor = .white
-            dayLabel.textColor = .systemBlue
-            weekdayLabel.textColor = .systemBlue
+            dayLabel.textColor = .black
+            weekdayLabel.textColor = .black
         } else {
             // 나머지 셀은 반투명 흰색
             contentView.backgroundColor = UIColor.white.withAlphaComponent(0.2)

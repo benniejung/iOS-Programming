@@ -17,7 +17,9 @@ final class MomentsViewController: UIViewController {
     private var dateList: [DateModel] = []
     private let today = Date()
 
-    private let gradientBackgroundView = UIView()
+    private let gradientBackgroundView = UIView().then {
+        $0.backgroundColor = UIColor(hex: "#FFAE52") // ✅ 오렌지색
+    }
     private let gradientLayer = CAGradientLayer()
     
     private let remainingTimeLabel = UILabel().then {
@@ -42,7 +44,7 @@ final class MomentsViewController: UIViewController {
         layout.sectionInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         $0.collectionViewLayout = layout
         $0.showsHorizontalScrollIndicator = false
-        $0.backgroundColor = .clear
+        $0.backgroundColor = UIColor(hex: "#FFAE52")
     }
 
     private let momentsTableView = UITableView().then {
@@ -160,18 +162,18 @@ final class MomentsViewController: UIViewController {
 
         cameraButton.addTarget(self, action: #selector(didTapCameraButton), for: .touchUpInside)
 
-        setupGradient()
+//        setupGradient()
     }
 
-    private func setupGradient() {
-        gradientLayer.colors = [
-            UIColor(hex: "#6366F1").cgColor,
-            UIColor(hex: "#9333EA").cgColor
-        ]
-        gradientLayer.startPoint = CGPoint(x: 0, y: 0.5)
-        gradientLayer.endPoint = CGPoint(x: 1, y: 0.5)
-        gradientBackgroundView.layer.insertSublayer(gradientLayer, at: 0)
-    }
+//    private func setupGradient() {
+//        gradientLayer.colors = [
+//            UIColor(hex: "#6366F1").cgColor,
+//            UIColor(hex: "#9333EA").cgColor
+//        ]
+//        gradientLayer.startPoint = CGPoint(x: 0, y: 0.5)
+//        gradientLayer.endPoint = CGPoint(x: 1, y: 0.5)
+//        gradientBackgroundView.layer.insertSublayer(gradientLayer, at: 0)
+//    }
 
     private func setupDates() {
         let calendar = Calendar.current
@@ -248,7 +250,7 @@ final class MomentsViewController: UIViewController {
              backgroundColor = UIColor.systemGroupedBackground
              contentView.layer.cornerRadius = 12
              contentView.clipsToBounds = true
-             contentView.backgroundColor = UIColor(red: 243/255, green: 244/255, blue: 255/255, alpha: 1)
+             contentView.backgroundColor = UIColor(hex: "#F5EEE4")
 
              momentImageView.contentMode = .scaleAspectFill
              momentImageView.clipsToBounds = true
